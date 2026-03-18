@@ -15,6 +15,7 @@ backend/dist/
 frontend/.env.local
 frontend/.env.*.local
 backend/.env
+frontend/.git.backup/
 
 # Logs
 npm-debug.log*
