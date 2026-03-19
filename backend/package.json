@@ -8,6 +8,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
+    "setup": "tsx src/scripts/setup-db.ts && npm run migrate",
     "migrate": "tsx src/scripts/migrate.ts",
     "seed": "tsx src/scripts/seed.ts",
     "lint": "eslint \"src/**/*.ts\""

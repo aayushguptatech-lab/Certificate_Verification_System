@@ -7,15 +7,16 @@ import { AppError } from "../utils/http.js";
 import { asyncHandler, noContent, ok } from "../utils/http.js";
 
 const createSchema = z.object({
-  certificateId: z.string().regex(/^[A-Z0-9-]{10,}$/),
+  certificateId: z.string().regex(/^[A-Za-z0-9-]{10,}$/, "Certificate ID must be at least 10 characters and contain only letters, numbers, and hyphens"),
   title: z.string().min(2).max(255),
   issuer: z.string().min(2).max(255),
   issueDate: z.string().date(),
-  expiryDate: z.string().date(),
+  expiryDate: z.string().date().optional(),
   recipientName: z.string().min(2).max(255),
   status: z.enum(["active", "expired", "revoked", "pending"]).optional(),
   verificationCode: z.string().max(64).optional(),
-  description: z.string().max(2000).optional()
+  description: z.string().max(2000).optional(),
+  isLifetime: z.boolean().optional()
 });
 
 const updateSchema = z

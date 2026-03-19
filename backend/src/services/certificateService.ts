@@ -111,11 +111,12 @@ export async function createCertificate(
     title: string;
     issuer: string;
     issueDate: string;
-    expiryDate: string;
+    expiryDate?: string;
     recipientName: string;
     status?: "active" | "expired" | "revoked" | "pending";
     verificationCode?: string;
     description?: string;
+    isLifetime?: boolean;
   }
 ) {
   const existing = await queryRows<CertificateRow>("SELECT * FROM certificates WHERE certificate_id = ? LIMIT 1", [
@@ -124,6 +125,14 @@ export async function createCertificate(
 
   if (existing.length > 0) {
     throw new AppError(409, "Certificate ID already exists");
+  }
+
+  // Handle lifetime certificates - set expiry to 100 years from now
+  let expiryDate = data.expiryDate;
+  if (data.isLifetime || !expiryDate) {
+    const futureDate = new Date();
+    futureDate.setFullYear(futureDate.getFullYear() + 100);
+    expiryDate = futureDate.toISOString().split('T')[0];
   }
 
   const certId = uuidv4();
@@ -137,7 +146,7 @@ export async function createCertificate(
       data.title,
       data.issuer,
       data.issueDate,
-      data.expiryDate,
+      expiryDate,
       data.recipientName,
       data.status ?? "active",
       data.verificationCode ?? null,
@@ -213,6 +222,7 @@ export async function verifyCertificate(
   req: Request,
   input: { certificateId: string; recipientName: string }
 ) {
+  // First try exact match with both certificate ID and recipient name
   const rows = await queryRows<CertificateRow>(
     `SELECT * FROM certificates
      WHERE certificate_id = ? AND LOWER(recipient_name) = LOWER(?)
@@ -224,12 +234,23 @@ export async function verifyCertificate(
   const ipAddress = getClientIp(req);
 
   if (!cert) {
+    // Check if certificate exists but recipient name doesn't match
+    const certExistsRows = await queryRows<CertificateRow>(
+      `SELECT recipient_name FROM certificates WHERE certificate_id = ? LIMIT 1`,
+      [input.certificateId]
+    );
+
+    const certExists = certExistsRows[0];
+    const errorMsg = certExists
+      ? `Certificate exists but recipient name doesn't match. Certificate is for: ${certExists.recipient_name}`
+      : "Certificate not found";
+
     await execute(
       `INSERT INTO verification_logs (id, certificate_id, certificate_ref_id, verified_by, verification_date, status, ip_address)
        VALUES (?, ?, NULL, ?, NOW(), 'failed', ?)`,
       [uuidv4(), input.certificateId, input.recipientName, ipAddress]
     );
-    throw new AppError(404, "Certificate not found or recipient name mismatch");
+    throw new AppError(404, errorMsg);
   }
 
   await execute(
