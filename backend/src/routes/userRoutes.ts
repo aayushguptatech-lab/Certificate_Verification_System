@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import { validateBody } from "../middleware/validate.js";
 import * as userService from "../services/userService.js";
 import { asyncHandler, noContent, ok } from "../utils/http.js";
@@ -26,6 +26,17 @@ const deleteAccountSchema = z.object({
 export const userRoutes = Router();
 
 userRoutes.use(requireAuth);
+
+userRoutes.get(
+  "/",
+  requireRole(["admin"]),
+  asyncHandler(async (req, res) => {
+    const page = Number(req.query.page ?? 1);
+    const limit = Number(req.query.limit ?? 50);
+    const users = await userService.getUsers(req.auth!, page, limit);
+    ok(res, users);
+  })
+);
 
 userRoutes.get(
   "/profile",

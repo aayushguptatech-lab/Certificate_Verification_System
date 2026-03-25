@@ -81,3 +81,19 @@ export async function deleteAccount(auth: RequestUser, password: string): Promis
 
   await execute("DELETE FROM users WHERE id = ?", [auth.userId]);
 }
+
+export async function getUsers(auth: RequestUser, page = 1, limit = 50) {
+  if (auth.role !== "admin") {
+    throw new AppError(403, "Forbidden");
+  }
+
+  const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.min(Math.floor(limit), 100) : 50;
+  const offset = (safePage - 1) * safeLimit;
+
+  const rows = await queryRows<UserRow>(
+    "SELECT id, full_name, email, account_type, role, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?",
+    [safeLimit, offset]
+  );
+  return rows.map(mapUser);
+}

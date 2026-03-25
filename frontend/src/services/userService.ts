@@ -11,6 +11,13 @@ class UserService {
   }
 
   /**
+   * Get all users (admin only)
+   */
+  async getUsers(page = 1, limit = 50): Promise<User[]> {
+    return apiClient.get<User[]>(API_ENDPOINTS.USERS.LIST, { params: { page, limit } })
+  }
+
+  /**
    * Update user profile
    */
   async updateProfile(data: Partial<User>): Promise<User> {

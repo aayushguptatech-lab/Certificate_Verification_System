@@ -5,7 +5,6 @@
 export const ROUTES = {
   HOME: '/',
   VERIFY: '/verify',
-  TRACK_STATUS: '/track-status',
   LOGIN: '/login',
   ADMIN_LOGIN: '/admin-login',
   REGISTER: '/register',

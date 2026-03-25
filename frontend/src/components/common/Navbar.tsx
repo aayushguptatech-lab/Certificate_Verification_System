@@ -35,7 +35,6 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-8">
             <Link to={ROUTES.HOME} className="hover:text-accent transition">Home</Link>
             <Link to={ROUTES.VERIFY} className="hover:text-accent transition">Verify Certificate</Link>
-            <Link to={ROUTES.TRACK_STATUS} className="hover:text-accent transition">Track Status</Link>
             {isAuthenticated && (
               <Link to={ROUTES.DASHBOARD} className="hover:text-accent transition">Dashboard</Link>
             )}
@@ -78,7 +77,6 @@ const Navbar = () => {
           <div className="md:hidden mt-4 pb-4 space-y-3">
             <Link to={ROUTES.HOME} className="block hover:text-accent transition">Home</Link>
             <Link to={ROUTES.VERIFY} className="block hover:text-accent transition">Verify Certificate</Link>
-            <Link to={ROUTES.TRACK_STATUS} className="block hover:text-accent transition">Track Status</Link>
             {isAuthenticated && (
               <Link to={ROUTES.DASHBOARD} className="block hover:text-accent transition">Dashboard</Link>
             )}

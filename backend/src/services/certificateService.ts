@@ -107,7 +107,7 @@ export async function getCertificate(auth: RequestUser, id: string) {
 export async function createCertificate(
   auth: RequestUser,
   data: {
-    certificateId: string;
+    certificateId?: string;
     title: string;
     issuer: string;
     issueDate: string;
@@ -117,14 +117,30 @@ export async function createCertificate(
     verificationCode?: string;
     description?: string;
     isLifetime?: boolean;
+    ownerId?: string;
   }
 ) {
-  const existing = await queryRows<CertificateRow>("SELECT * FROM certificates WHERE certificate_id = ? LIMIT 1", [
-    data.certificateId
-  ]);
+  let certificateId = data.certificateId;
 
-  if (existing.length > 0) {
-    throw new AppError(409, "Certificate ID already exists");
+  if (!certificateId) {
+    const year = new Date().getFullYear();
+    let isUnique = false;
+    while (!isUnique) {
+      const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+      certificateId = `CERT-${year}-${random}`;
+      const existing = await queryRows("SELECT id FROM certificates WHERE certificate_id = ? LIMIT 1", [certificateId]);
+      if (existing.length === 0) {
+        isUnique = true;
+      }
+    }
+  } else {
+    const existing = await queryRows<CertificateRow>("SELECT * FROM certificates WHERE certificate_id = ? LIMIT 1", [
+      certificateId
+    ]);
+
+    if (existing.length > 0) {
+      throw new AppError(409, "Certificate ID already exists");
+    }
   }
 
   // Handle lifetime certificates - set expiry to 100 years from now
@@ -142,7 +158,7 @@ export async function createCertificate(
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
     [
       certId,
-      data.certificateId,
+      certificateId,
       data.title,
       data.issuer,
       data.issueDate,
@@ -151,7 +167,7 @@ export async function createCertificate(
       data.status ?? "active",
       data.verificationCode ?? null,
       data.description ?? null,
-      auth.userId
+      (auth.role === "admin" && data.ownerId) ? data.ownerId : auth.userId
     ]
   );
 

@@ -1,14 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Search, CheckCircle, AlertCircle, Clock } from 'lucide-react'
 import { certificateService } from '../services'
 import type { CertificateVerificationResult } from '../types'
 
 export default function VerifyCertificate() {
+  const [searchParams] = useSearchParams()
   const [certificateId, setCertificateId] = useState('')
   const [recipientName, setRecipientName] = useState('')
   const [verificationStatus, setVerificationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [verificationData, setVerificationData] = useState<CertificateVerificationResult | null>(null)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const certId = searchParams.get('certificateId')
+    const name = searchParams.get('recipientName')
+    if (certId) {
+      setCertificateId(certId)
+    }
+    if (name) {
+      setRecipientName(name)
+    }
+  }, [searchParams])
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()

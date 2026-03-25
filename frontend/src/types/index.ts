@@ -6,6 +6,7 @@ export interface User {
   fullName: string
   email: string
   accountType: AccountType
+  role: 'user' | 'admin'
   createdAt: string
   updatedAt: string
 }
@@ -37,6 +38,7 @@ export interface Certificate {
   status: CertificateStatus
   verificationCode?: string
   description?: string
+  ownerId?: string
   createdAt: string
   updatedAt: string
 }

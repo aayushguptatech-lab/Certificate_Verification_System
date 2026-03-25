@@ -6,7 +6,6 @@ import { ROUTES } from './constants'
 // Page Components
 import Home from './pages/Home'
 import VerifyCertificate from './pages/VerifyCertificate'
-import TrackStatus from './pages/TrackStatus'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import AdminLogin from './pages/auth/AdminLogin'
@@ -23,7 +22,6 @@ function App() {
             <Routes>
               <Route path={ROUTES.HOME} element={<Home />} />
               <Route path={ROUTES.VERIFY} element={<VerifyCertificate />} />
-              <Route path={ROUTES.TRACK_STATUS} element={<TrackStatus />} />
               <Route path={ROUTES.LOGIN} element={<Login />} />
               <Route path={ROUTES.REGISTER} element={<Register />} />
               <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />

@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
 
   // User endpoints
   USERS: {
+    LIST: '/users',
     PROFILE: '/users/profile',
     UPDATE: '/users/profile',
     DELETE: '/users/account',

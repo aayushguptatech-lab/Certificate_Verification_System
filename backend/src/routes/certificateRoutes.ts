@@ -7,7 +7,7 @@ import { AppError } from "../utils/http.js";
 import { asyncHandler, noContent, ok } from "../utils/http.js";
 
 const createSchema = z.object({
-  certificateId: z.string().regex(/^[A-Za-z0-9-]{10,}$/, "Certificate ID must be at least 10 characters and contain only letters, numbers, and hyphens"),
+  certificateId: z.preprocess((val) => (val === "" ? undefined : val), z.string().regex(/^[A-Za-z0-9-]{3,}$/, "Invalid certificate ID format (min 3 chars, alphanumeric and hyphens only)").optional()),
   title: z.string().min(2).max(255),
   issuer: z.string().min(2).max(255),
   issueDate: z.string().date(),
@@ -16,7 +16,8 @@ const createSchema = z.object({
   status: z.enum(["active", "expired", "revoked", "pending"]).optional(),
   verificationCode: z.string().max(64).optional(),
   description: z.string().max(2000).optional(),
-  isLifetime: z.boolean().optional()
+  isLifetime: z.boolean().optional(),
+  ownerId: z.string().uuid().optional()
 });
 
 const updateSchema = z
