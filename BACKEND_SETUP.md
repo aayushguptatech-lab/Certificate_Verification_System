@@ -258,19 +258,19 @@ app.use(cors(corsOptions));
 ## Deployment Considerations
 
 ### Frontend (Vercel, Netlify, GitHub Pages)
-```bashySQL database for production
+```bash
+npm run build
+```
+
+### Backend (Heroku, Railway, Render)
+- Set environment variables on hosting platform
+- Configure MySQL database for production
 - Update CORS origins for production domain
 
 ## Additional Resources
 
 - [Express.js Documentation](https://expressjs.com)
-- [MySQL2 Documentation](https://github.com/sidorares/node-mysql2
-- Update CORS origins for production domain
-
-## Additional Resources
-
-- [Express.js Documentation](https://expressjs.com)
-- [MongoDB Documentation](https://docs.mongodb.com)
+- [MySQL2 Documentation](https://github.com/sidorares/node-mysql2)
 - [JWT Authentication](https://jwt.io)
 - [CORS Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 

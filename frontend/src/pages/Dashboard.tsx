@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Eye, Trash, Plus, Calendar, User, Award, QrCode as QrIcon, X } from 'lucide-react'
+
+import { Download, Eye, Trash, Plus, Calendar, User, Award, Upload, QrCode as QrIcon, X } from 'lucide-react'
 import { certificateService, userService } from '../services'
 import { useAuth } from '../hooks'
+import CertificateUploadForm from '../components/CertificateUploadForm'
 import type { Certificate, VerificationLog, User as UserType } from '../types'
 import QrCode from '../components/common/QrCode'
 
@@ -15,6 +17,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false)
   const [isActionLoading, setIsActionLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+<<<<<<< Updated upstream
   
   // Modal states
   const [showGenModal, setShowGenModal] = useState(false)
@@ -31,6 +34,9 @@ export default function Dashboard() {
     ownerId: '',
     description: ''
   })
+=======
+  const [showUploadForm, setShowUploadForm] = useState(false)
+>>>>>>> Stashed changes
 
   const loadDashboard = useCallback(async () => {
     setIsLoading(true)
@@ -83,6 +89,7 @@ export default function Dashboard() {
     }
   }
 
+<<<<<<< Updated upstream
   const handleGenerateCertificate = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsActionLoading(true)
@@ -118,6 +125,11 @@ export default function Dashboard() {
         recipientName: selectedUser.fullName
       })
     }
+=======
+  const handleUploadSuccess = (newCertificate: Certificate) => {
+    setCertificates((prev) => [newCertificate, ...prev])
+    setShowUploadForm(false)
+>>>>>>> Stashed changes
   }
 
   const handleLogout = async () => {
@@ -199,6 +211,7 @@ export default function Dashboard() {
             {/* Certificates Section */}
             <div className="card mb-8">
               <div className="flex items-center justify-between mb-6">
+<<<<<<< Updated upstream
                 <h2 className="text-2xl font-bold text-gray-900">{isAdmin ? 'All Certificates' : 'My Certificates'}</h2>
                 <div className="flex gap-2">
                   {isAdmin && (
@@ -211,6 +224,16 @@ export default function Dashboard() {
                     </button>
                   )}
                   <button className="btn-secondary flex items-center gap-2" onClick={loadDashboard}>
+=======
+                <h2 className="text-2xl font-bold text-gray-900">My Certificates</h2>
+                <div className="flex gap-2">
+                  <button className="btn-primary flex items-center gap-2" onClick={() => setShowUploadForm(true)}>
+                    <Upload size={20} />
+                    Upload New
+                  </button>
+                  <button className="btn-secondary flex items-center gap-2" onClick={loadDashboard}>
+                    <Plus size={20} />
+>>>>>>> Stashed changes
                     Refresh
                   </button>
                 </div>
@@ -360,7 +383,11 @@ export default function Dashboard() {
             <div className="card">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <Link to="/verify" className="w-full btn-primary inline-block text-center">
+                <button className="w-full btn-primary inline-flex items-center justify-center gap-2" onClick={() => setShowUploadForm(true)}>
+                  <Upload size={18} />
+                  Upload Certificate
+                </button>
+                <Link to="/verify" className="w-full btn-secondary inline-block text-center">
                   Verify Another
                 </Link>
                 <button className="w-full btn-outline">Download Report</button>
@@ -384,6 +411,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+<<<<<<< Updated upstream
       {/* Generate Certificate Modal */}
       {showGenModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -499,6 +527,14 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+=======
+      {/* Upload Form Modal */}
+      {showUploadForm && (
+        <CertificateUploadForm
+          onClose={() => setShowUploadForm(false)}
+          onSuccess={handleUploadSuccess}
+        />
+>>>>>>> Stashed changes
       )}
     </div>
   )
